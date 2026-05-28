@@ -1,6 +1,7 @@
 import base64
 import os
 import re
+import time
 
 from flask import Flask, render_template, jsonify, request
 
@@ -94,8 +95,8 @@ def extract_pairing_code(page):
 
 
 def wait_for_pairing_code(page, timeout=45000, poll_interval=1000):
-    deadline = automation.time.monotonic() + (timeout / 1000)
-    while automation.time.monotonic() < deadline:
+    deadline = time.monotonic() + (timeout / 1000)
+    while time.monotonic() < deadline:
         code = extract_pairing_code(page)
         if code:
             return code
@@ -258,13 +259,15 @@ def scan_qr():
     """Captures a WhatsApp Web QR code screenshot for remote scanning."""
     try:
         result = capture_qr_code()
-        qr_data = base64.b64encode(result["screenshot"]).decode('utf-8')
-        return jsonify({
-            "status": "success",
-            "message": result["message"],
-            "screenshot": f"data:image/png;base64,{qr_data}",
-            "state": result["state"],
-        })
+        qr_data = base64.b64encode(result["screenshot"]).decode("utf-8")
+        return jsonify(
+            {
+                "status": "success",
+                "message": result["message"],
+                "screenshot": f"data:image/png;base64,{qr_data}",
+                "state": result["state"],
+            }
+        )
     except automation.BrowserSessionBusyError as exc:
         return jsonify({"status": "error", "message": str(exc)}), 423
     except Exception as exc:
