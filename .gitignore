@@ -1,0 +1,9 @@
+.env
+.env.*
+.vercel
+__pycache__/
+*.py[cod]
+whatsapp_session/
+dashboard_verify.png
+*.log
+*.vsix
